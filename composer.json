@@ -1,7 +1,13 @@
 {
-    "name": "laravel/laravel",
+    "name": "mvaload/task-manager",
+    "authors": [
+        {
+            "name": "mvaload",
+            "email": "mvaload@gmail.com"
+        }
+    ],
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Task manager",
     "keywords": [
         "framework",
         "laravel"
@@ -58,6 +64,10 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+
+        "phpcs": "phpcs",
+        "phpunit": "phpunit",
+        "test": "phpunit tests"
     }
 }
