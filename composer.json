@@ -18,7 +18,8 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
-        "rollbar/rollbar-laravel": "^5.0"
+        "rollbar/rollbar-laravel": "^5.0",
+        "vlucas/phpdotenv": "^3.6"
     },
     "require-dev": {
         "facade/ignition": "^1.4",
