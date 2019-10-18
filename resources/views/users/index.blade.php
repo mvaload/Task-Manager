@@ -2,11 +2,7 @@
 
 @section('content')
 <div class="container">
-    @if (session('status'))
-    <div class="alert alert-success" role="alert">
-        {{ session('status') }}
-    </div>
-    @endif
+@include('partials.flash')
 
     <h1>{{ __('Users') }}</h1>
     <table class="table table-striped">
@@ -27,7 +23,7 @@
                 <td>{{ $user->created_at }}</td>
             </tr>
             @empty
-                <p>No users</p>
+                <p>{{ __('No records') }}</p>
             @endforelse
         </tbody>
     </table>
