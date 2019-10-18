@@ -58,7 +58,7 @@ class UserController extends Controller
             auth()->user()->password = Hash::make($data['password']);
         }
         auth()->user()->save();
-        return redirect()->route('home')->with('status', 'Your account has been updated');
+        return redirect()->route('index')->with('success', __('Your account has been updated'));
     }
 
     /**
@@ -70,9 +70,12 @@ class UserController extends Controller
     public function destroy(Request $request)
     {
         $user = auth()->user();
+        if (!$user->createdTasks->isEmpty() || !$user->tasks->isEmpty()) {
+            return back()->with('danger', __('Your account cannot be deleted. Remove dependencies first!'));
+        }
         auth()->guard()->logout();
         $request->session()->invalidate();
         $user->delete();
-        return redirect()->route('home');
+        return redirect()->route('index');
     }
 }
