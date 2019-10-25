@@ -34,7 +34,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit()
+    public function edit(User $user)
     {
         return view('users.edit');
     }
@@ -46,17 +46,19 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, User $user)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed']
         ]);
+
         auth()->user()->name = $data['name'];
-        
+
         if ($data['password']) {
             auth()->user()->password = Hash::make($data['password']);
         }
+        
         auth()->user()->save();
         return redirect()->route('index')->with('success', __('Your account has been updated'));
     }
@@ -67,12 +69,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request, User $user)
     {
         $user = auth()->user();
-        if (!$user->createdTasks->isEmpty() || !$user->tasks->isEmpty()) {
-            return back()->with('danger', __('Your account cannot be deleted. Remove dependencies first!'));
-        }
         auth()->guard()->logout();
         $request->session()->invalidate();
         $user->delete();

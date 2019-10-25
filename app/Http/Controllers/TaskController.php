@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+use App\Filters\FiltersTaskAssignedTo;
+use App\Filters\FiltersTaskTags;
 use App\Task;
 use App\TaskStatus;
 use App\User;
+use App\Tag;
 
 class TaskController extends Controller
 {
@@ -18,16 +23,37 @@ class TaskController extends Controller
     {
         $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::with('status', 'creator', 'assignedTo')->paginate(10);
-        return view('tasks.index', ['tasks' => $tasks]);
+        $tasks = QueryBuilder::for(Task::class)->allowedFilters([
+            AllowedFilter::exact('status_id'),
+            AllowedFilter::custom('assigned_to_id', new FiltersTaskAssignedTo),
+            AllowedFilter::custom('tags', new FiltersTaskTags)])
+            ->allowedIncludes(['status', 'creator', 'assignedTo'])->paginate(10);
+
+        $users = User::orderBy('name')->withTrashed()->get();
+        $statuses = TaskStatus::orderBy('name')->withTrashed()->get();
+        $tags = Tag::orderBy('name')->get();
+        
+        return view('tasks.index', [
+            'users' => $users,
+            'statuses' => $statuses,
+            'tags' => $tags,
+            'tasks' => $tasks,
+            'filter' => [
+                'status_id' => $request->input('filter.status_id'),
+                'assigned_to_id' => $request->input('filter.assigned_to_id'),
+                'tags' => $request->input('filter.tags'),
+            ]
+        ]);
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -42,6 +68,7 @@ class TaskController extends Controller
             'users' => $users
         ]);
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -57,9 +84,11 @@ class TaskController extends Controller
             'assigned_to_id' => ['nullable', 'exists:users,id']
         ]);
         $data['creator_id'] = auth()->user()->id;
-        Task::create($data);
+        $tags = Tag::getIds($request->tags);
+        Task::create($data)->tags()->sync($tags);
         return redirect()->route('tasks.index')->with('success', __('The task has been created!'));
     }
+
     /**
      * Display the specified resource.
      *
@@ -70,6 +99,7 @@ class TaskController extends Controller
     {
         return view('tasks.show', ['task' => $task]);
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -86,6 +116,7 @@ class TaskController extends Controller
             'users' => $users
         ]);
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -101,13 +132,16 @@ class TaskController extends Controller
             'status_id' => ['exists:task_statuses,id'],
             'assigned_to_id' => ['nullable', 'exists:users,id']
         ]);
+        $tags = Tag::getIds($request->tags);
         $task->name = $data['name'];
         $task->description = $data['description'];
         $task->status_id = $data['status_id'];
         $task->assigned_to_id = $data['assigned_to_id'];
+        $task->tags()->sync($tags);
         $task->save();
         return redirect()->route('tasks.index')->with('success', __('The task has been updated!'));
     }
+    
     /**
      * Remove the specified resource from storage.
      *
@@ -116,6 +150,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $task->tags()->detach();
         $task->delete();
         return redirect()->route('tasks.index')->with('success', __('The task has been deleted'));
     }
