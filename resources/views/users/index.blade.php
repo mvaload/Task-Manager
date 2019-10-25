@@ -2,8 +2,7 @@
 
 @section('content')
 <div class="container">
-@include('partials.flash')
-
+    @include('partials.flash')
     <h1>{{ __('Users') }}</h1>
     <table class="table table-striped">
         <thead class="thead-dark">
@@ -23,7 +22,7 @@
                 <td>{{ $user->created_at }}</td>
             </tr>
             @empty
-                <p>{{ __('No records') }}</p>
+            <p>{{ __('No records') }}</p>
             @endforelse
         </tbody>
     </table>
