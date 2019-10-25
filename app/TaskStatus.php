@@ -3,11 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaskStatus extends Model
 {
-    protected $fillable = ['name'];
+    use SoftDeletes;
 
+    protected $fillable = ['name'];
 
     public function tasks()
     {

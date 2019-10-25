@@ -16,16 +16,21 @@ class Task extends Model
 
     public function status()
     {
-        return $this->belongsTo(TaskStatus::class);
+        return $this->belongsTo(TaskStatus::class)->withTrashed();
     }
     
     public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
     
     public function assignedTo()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'task_tag');
     }
 }
