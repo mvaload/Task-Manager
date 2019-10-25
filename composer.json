@@ -19,6 +19,7 @@
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
         "rollbar/rollbar-laravel": "^5.0",
+        "spatie/laravel-query-builder": "^2.3",
         "vlucas/phpdotenv": "^3.6"
     },
     "require-dev": {
