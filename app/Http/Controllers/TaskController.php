@@ -63,9 +63,11 @@ class TaskController extends Controller
     {
         $taskStatuses = TaskStatus::all();
         $users = User::all();
+        $tags = Tag::all();
         return view('tasks.create', [
             'statuses' => $taskStatuses,
-            'users' => $users
+            'users' => $users,
+            'tags' => $tags
         ]);
     }
 
@@ -110,10 +112,12 @@ class TaskController extends Controller
     {
         $taskStatuses = TaskStatus::all();
         $users = User::all();
+        $tags = Tag::all();
         return view('tasks.edit', [
             'task' => $task,
             'statuses' => $taskStatuses,
-            'users' => $users
+            'users' => $users,
+            'tags' => $tags
         ]);
     }
 
