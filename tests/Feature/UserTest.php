@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use Tests\TestCase;
@@ -9,65 +10,57 @@ use Illuminate\Support\Facades\Hash;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase;
-
-    private $usersTestSet;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->usersTestSet = factory(User::class, 3)->create();
-    }
-
     public function testGetUsersIndex()
     {
-        $response = $this->actingAs($this->usersTestSet->first())
-            ->get('/users')
-            ->assertOk();
-        $this->assertDatabaseHas('users', ['name' => $this->usersTestSet->first()->name]);
+        $user = $this->usersTestSet->first();
+        $this->actingAs($user)->get('/users')->assertOk();
+        $this->assertDatabaseHas('users', ['name' => $user->name]);
     }
 
     public function testGetUsersEdit()
     {
-        $response = $this->actingAs($this->usersTestSet->first())->get('/users/edit');
-        $response->assertOk();
+        $user = $this->usersTestSet->first();
+        $this->actingAs($user)->get("/users/{$user->id}/edit")->assertOk();
     }
 
     public function testPutUsers()
     {
-        $response = $this->actingAs($this->usersTestSet->first())
-            ->from('/users/edit')
-            ->put('/users', ['name' => 'User Test', 'password' => null])
+        $user = $this->usersTestSet->first();
+        $this->actingAs($user)
+            ->from("/users/{$user->id}/edit")
+            ->put("/users/{$user->id}", ['name' => 'Rory Kilback', 'password' => null])
             ->assertRedirect('/');
-        $this->assertDatabaseHas('users', ['name' => 'User Test']);
+        $this->assertDatabaseHas('users', ['name' => 'Rory Kilback']);
     }
 
-    public function testPutUsers2()
+    public function testPutUsersChangePassword()
     {
-        $response = $this->actingAs($this->usersTestSet->first())
-            ->put('/users', [
-                'name' => 'User Test',
-                'password' => 'qwerty1234',
-                'password_confirmation' => 'qwerty1234'
+        $user = $this->usersTestSet->first();
+        $this->actingAs($user)
+            ->put("/users/{$user->id}", [
+                'name' => 'Destini Schmitt',
+                'password' => 'newpassword',
+                'password_confirmation' => 'newpassword'
             ]);
         $this->assertDatabaseMissing('users', [
-            'name' => $this->usersTestSet->first()->name,
-            'password' => '$2y$10$gvOVg5GR1RiGz6msnQmaqOXaHvnnAUnaoipdmHgXWr9LhyvMo8i3y'
+            'name' => $user->name,
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
         ]);
     }
 
-    public function testPutUsers3()
+    public function testPutUsersValidationFail()
     {
-        $response = $this->actingAs($this->usersTestSet->first())
-            ->from('/users/edit')
-            ->put('/users', ['name' => null, 'password' => null])
-            ->assertRedirect('/users/edit');
+        $user = $this->usersTestSet->first();
+        $this->actingAs($user)
+            ->from("/users/{$user->id}/edit")
+            ->put("/users/{$user->id}", ['name' => null, 'password' => null])
+            ->assertRedirect("/users/{$user->id}/edit");
     }
 
     public function testDeleteUsers()
     {
-        $response = $this->actingAs($this->usersTestSet->first())
-            ->delete('/users');
-        $this->assertDatabaseMissing('users', ['name' => $this->usersTestSet->first()->name]);
+        $user = $this->usersTestSet->last();
+        $this->actingAs($user)->delete("/users/{$user->id}");
+        $this->assertSOftDeleted('users', ['name' => $user->name]);
     }
 }
