@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 use Illuminate\Database\Eloquent\Model;
 use App\Task;
 
@@ -20,9 +19,9 @@ class Tag extends Model
         $tagsRawArray = explode(',', $tagString);
         
         return collect($tagsRawArray)->map(function ($tag, $key) {
-                return trim($tag);
-            })->filter()->map(function ($tag, $key) {
-                return Tag::firstOrCreate(['name' => $tag])->id;
-            })->toArray();
+            return trim($tag);
+        })->filter()->map(function ($tag, $key) {
+            return Tag::firstOrCreate(['name' => $tag])->id;
+        })->toArray();
     }
 }

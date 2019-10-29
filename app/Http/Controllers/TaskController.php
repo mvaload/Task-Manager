@@ -33,8 +33,8 @@ class TaskController extends Controller
     {
         $tasks = QueryBuilder::for(Task::class)->allowedFilters([
             AllowedFilter::exact('status_id'),
-            AllowedFilter::custom('assigned_to_id', new FiltersTaskAssignedTo),
-            AllowedFilter::custom('tags', new FiltersTaskTags)])
+            AllowedFilter::custom('assigned_to_id', new FiltersTaskAssignedTo()),
+            AllowedFilter::custom('tags', new FiltersTaskTags())])
             ->allowedIncludes(['status', 'creator', 'assignedTo'])->paginate(10);
 
         $users = User::orderBy('name')->withTrashed()->get();
