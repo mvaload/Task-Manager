@@ -41,8 +41,8 @@ class TestCase extends BaseTestCase
         ]);
         $taskWithTags = $this->tasksTestSet[0];
         $tags = $this->tagsTestSet->map(function ($tag, $key) {
-                return $tag->id;
-            })->toArray();
+            return $tag->id;
+        })->toArray();
         $taskWithTags->tags()->sync($tags);
         $taskWithTags->save();
     }
