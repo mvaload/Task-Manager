@@ -6,13 +6,13 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header text-white bg-primary">{{ __('Edit Task') }}</div>
+                <div class="card-header text-white bg-primary">{{ __('messages.task.headerUpdate') }}</div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('tasks.update', $task->id) }}">
                         @csrf
                         @method('PUT')
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('messages.info.name') }}</label>
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $task->name }}" required autocomplete="name" autofocus>
                                 @error('name')
@@ -23,13 +23,13 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Description') }}</label>
+                            <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('messages.info.des') }}</label>
                             <div class="col-md-6">
                                 <textarea id="description" class="form-control" name="description">{{ $task->description }}</textarea>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="status_id" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
+                            <label for="status_id" class="col-md-4 col-form-label text-md-right">{{ __('messages.info.status') }}</label>
                             <div class="col-md-6">
                                 <select id="status_id" class="form-control @error('status_id') is-invalid @enderror" name="status_id">
                                     @foreach ($statuses as $status)
@@ -44,7 +44,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="assigned_to_id" class="col-md-4 col-form-label text-md-right">{{ __('Assigned To') }}</label>
+                            <label for="assigned_to_id" class="col-md-4 col-form-label text-md-right">{{ __('messages.info.assTo') }}</label>
                             <div class="col-md-6">
                                 <select id="assigned_to_id" class="form-control @error('assigned_to_id') is-invalid @enderror" name="assigned_to_id">
                                     <option>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="tags" class="col-md-4 col-form-label text-md-right">{{ __('Tags') }}</label>
+                            <label for="tags" class="col-md-4 col-form-label text-md-right">{{ __('messages.info.tag') }}</label>
                             <div class="col-md-6">
                                 <select id="tags" class="form-control @error('tags') is-invalid @enderror" name="tags">
                                     <option>

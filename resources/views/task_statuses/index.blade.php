@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     @include('partials.flash')
-    <h1>{{ __('Task statuses') }}</h1>
+    <h1>{{ __('messages.header2') }}</h1>
     <div class="btn-group my-3" role="group" aria-label="Control buttons">
         <a href="{{ route('task_statuses.create') }}" class="btn btn-success" role="button" aria-pressed="true">{{ __('Create status') }}</a>
     </div>
@@ -21,7 +21,7 @@
                 <td><a href="{{ route('task_statuses.edit', $taskStatus->id) }}">{{ $taskStatus->name }}</a></td>
             </tr>
             @empty
-            <p>{{ __('No records') }}</p>
+            <p>{{ __('messages.info.record') }}</p>
             @endforelse
         </tbody>
     </table>

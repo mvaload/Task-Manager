@@ -7,7 +7,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card">
-                    <div class="card-header text-white bg-primary">{{ __('Create task status') }}</div>
+                    <div class="card-header text-white bg-primary">{{ __('messages.taskStatus.headerCreate') }}</div>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('task_statuses.store') }}">

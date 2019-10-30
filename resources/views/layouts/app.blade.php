@@ -48,6 +48,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('locale', ['locale' => 'en']) }}">EN</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('locale', ['locale' => 'ru']) }}">RU</a>
+                        </li>
                         @endif
                         @else
                         <li class="nav-item">
@@ -66,11 +72,17 @@
 
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('users.edit', auth()->user()->id) }}">{{ __('Edit account') }}</a>
-                                <a class="dropdown-item" href="{{ route('users.destroy', auth()->user()->id) }}" data-method="delete" data-confirm="Are you sure you want to log out and delete your account?">
-                                        {{ __('Delete account') }}
+                                <a class="dropdown-item" href="{{ route('users.destroy', auth()->user()->id) }}" data-method="delete" data-confirm="{{ __('messages.user.delete') }}">
+                                    {{ __('Delete account') }}
                                 </a>
                                 <a class="dropdown-item" href="{{ route('logout') }}" data-method="post">{{ __('Logout') }}</a>
                             </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('locale', ['locale' => 'en']) }}">EN</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('locale', ['locale' => 'ru']) }}">RU</a>
                         </li>
                         @endguest
                     </ul>
@@ -79,38 +91,14 @@
         </nav>
         <div class="container">
             <div class="jumbotron">
-                <h1 class="display-4">Task Manager</h1>
-                <p class="lead">This is a simple task management system.</p>
+                <h1 class="display-4">{{ __('messages.title') }}</h1>
+                <p class="lead">{{ __('messages.text') }}</p>
             </div>
         </div>
         <main class="py-4">
             @yield('content')
         </main>
     </div>
-
-    @auth
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Confirmation') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{ __('Are you sure you want to log out and delete your account?') }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                    <a href="{{ route('users.destroy', ['id' => auth()->user()->id]) }}" class="btn btn-danger" data-method="delete">
-                        {{ __('Yes, Delete it!') }}
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endauth
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>

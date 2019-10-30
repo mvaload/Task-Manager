@@ -3,13 +3,13 @@
 @section('content')
 <div class="container">
     @include('partials.flash')
-    <h1>{{ __('Tasks') }}</h1>
+    <h1>{{ __('messages.header3') }}</h1>
     <div class="btn-group my-3" role="group" aria-label="Control buttons">
         <a href="{{ route('tasks.create') }}" class="btn btn-success" role="button" aria-pressed="true">{{ __('Create task') }}</a>
     </div>
     <div class="row">
         <div class="col-md-2">
-            <h4>{{ __('Filters') }}</h4>
+            <h4>{{ __('messages.info.filter') }}</h4>
             <form method="GET" action="{{ route('tasks.index') }}">
                 <h5>{{ __('Statuses') }}</h5>
                 <select id="statusFilter" class="form-control" name="filter[status_id]">
@@ -65,7 +65,7 @@
                         <td>{{ $task->updated_at }}</td>
                     </tr>
                     @empty
-                    <p>{{ __('No records') }}</p>
+                    <p>{{ __('messages.info.record') }}</p>
                     @endforelse
                 </tbody>
             </table>

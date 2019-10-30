@@ -3,8 +3,7 @@
 @section('content')
 <div class="container">
     @include('partials.flash')
-    <h1>{{ __('Dashboard') }}</h1>
-    <h3>{{ __('My tasks') }}</h3>
+    <h3>{{ __('messages.taskbar') }}</h3>
     <div class="row">
         @forelse($myTasks as $myTask)
         <div class="col-md-4 mb-3">
@@ -20,7 +19,7 @@
             </div>
         </div>
         @empty
-        <p>{{ __('No records') }}</p>
+        <p>{{ __('messages.info.record') }}</p>
         @endforelse
     </div>
 </div>

@@ -12,6 +12,10 @@
 */
 
 Auth::routes(['reset' => false]);
+Route::get('locale/{locale}', function ($locale) {
+    Session::put('locale', $locale);
+    return redirect()->back();
+})->name('locale');
 Route::get('/', 'IndexController@index')->name('index');
 Route::resource('/users', 'UserController')->except(['show', 'create', 'store']);
 Route::resource('/task_statuses', 'TaskStatusController')->except('show');
