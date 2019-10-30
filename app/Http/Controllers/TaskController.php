@@ -88,7 +88,7 @@ class TaskController extends Controller
         $data['creator_id'] = auth()->user()->id;
         $tags = Tag::getIds($request->tags);
         Task::create($data)->tags()->sync($tags);
-        return redirect()->route('tasks.index')->with('success', __('The task has been created!'));
+        return redirect()->route('tasks.index')->with('success', __('messages.task.create'));
     }
 
     /**
@@ -143,7 +143,7 @@ class TaskController extends Controller
         $task->assigned_to_id = $data['assigned_to_id'];
         $task->tags()->sync($tags);
         $task->save();
-        return redirect()->route('tasks.index')->with('success', __('The task has been updated!'));
+        return redirect()->route('tasks.index')->with('success', __('messages.task.update'));
     }
     
     /**
@@ -156,6 +156,6 @@ class TaskController extends Controller
     {
         $task->tags()->detach();
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', __('The task has been deleted'));
+        return redirect()->route('tasks.index')->with('success', __('messages.task.delete'));
     }
 }

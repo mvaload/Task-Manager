@@ -60,7 +60,7 @@ class UserController extends Controller
         }
         
         auth()->user()->save();
-        return redirect()->route('index')->with('success', __('Your account has been updated'));
+        return redirect()->route('index')->with('success', __('messages.user.update'));
     }
 
     /**

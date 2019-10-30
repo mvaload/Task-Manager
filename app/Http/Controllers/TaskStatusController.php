@@ -53,7 +53,7 @@ class TaskStatusController extends Controller
             'name' => ['required', 'string', 'max:255']
         ]);
         TaskStatus::create($data);
-        return redirect()->route('task_statuses.index')->with('success', __('The task status has been created!'));
+        return redirect()->route('task_statuses.index')->with('success', __('messages.taskStatus.create'));
     }
 
     /**
@@ -81,7 +81,7 @@ class TaskStatusController extends Controller
         ]);
         $taskStatus->name = $data['name'];
         $taskStatus->save();
-        return redirect()->route('task_statuses.index')->with('success', __('The task status has been updated!'));
+        return redirect()->route('task_statuses.index')->with('success', __('messages.taskStatus.update'));
     }
     
     /**
@@ -93,6 +93,6 @@ class TaskStatusController extends Controller
     public function destroy(TaskStatus $taskStatus)
     {
         $taskStatus->delete();
-        return redirect()->route('task_statuses.index')->with('success', __('The task status has been deleted'));
+        return redirect()->route('task_statuses.index')->with('success', __('messages.taskStatus.delete'));
     }
 }
