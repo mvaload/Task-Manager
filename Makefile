@@ -1,8 +1,24 @@
-test:
-	composer run-script phpunit tests
-install:
+setup:
 	composer install
-run:
-	php -S localhost:8000 -t public
+	cp -n .env.example .env || true
+	php artisan key:gen --ansi
+	touch database/database.sqlite
+	php artisan migrate
 lint:
-	composer run-script phpcs -- --standard=PSR12 app routes tests --ignore=*/Auth/*,*/Bootstrap.php
+	composer phpcs
+lint-fix:
+	composer phpcbf
+test:
+	php artisan test
+test-coverage:
+	composer phpunit -- tests --whitelist tests --coverage-clover coverage-report
+deploy:
+	git push heroku
+migrate:
+	php artisan migrate
+console:
+	php artisan tinker
+run:
+	php artisan serve
+logs:
+	tail -f storage/logs/laravel.log
