@@ -2,16 +2,17 @@ setup:
 	composer install
 	cp -n .env.example .env || true
 	php artisan key:gen --ansi
-	touch database/database.sqlite
+	touch database/database.sqlite || true
 	php artisan migrate
 lint:
 	composer phpcs
 lint-fix:
 	composer phpcbf
 test:
+	php artisan config:clear
 	php artisan test
 test-coverage:
-	composer phpunit -- tests --whitelist tests --coverage-clover coverage-report
+	php artisan test --coverage-clover ./build/logs/clover.xml
 deploy:
 	git push heroku
 migrate:
