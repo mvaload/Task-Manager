@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,12 +13,14 @@
 |
 */
 
-Auth::routes(['reset' => false]);
-Route::get('locale/{locale}', function ($locale) {
-    Session::put('locale', $locale);
-    return redirect()->back();
-})->name('locale');
-Route::get('/', 'IndexController@index')->name('index');
-Route::resource('/users', 'UserController')->except(['show', 'create', 'store']);
-Route::resource('/task_statuses', 'TaskStatusController')->except('show');
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::resource('/task_statuses', 'TaskStatusController');
 Route::resource('/tasks', 'TaskController');
+Route::resource('/tags', 'TagController');
+
+Auth::routes(['verify' => true]);

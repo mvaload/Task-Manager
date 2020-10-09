@@ -2,160 +2,153 @@
 
 namespace App\Http\Controllers;
 
+use App\Task;
+use App\Tag;
+use App\User;
+use App\TaskStatus;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
-use App\Filters\FiltersTaskAssignedTo;
-use App\Filters\FiltersTaskTags;
-use App\Task;
-use App\TaskStatus;
-use App\User;
-use App\Tag;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-   /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['index']]);
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function index(Request $request)
     {
-        $tasks = QueryBuilder::for(Task::class)->allowedFilters([
-            AllowedFilter::exact('status_id'),
-            AllowedFilter::custom('assigned_to_id', new FiltersTaskAssignedTo()),
-            AllowedFilter::custom('tags', new FiltersTaskTags())])
-            ->allowedIncludes(['status', 'creator', 'assignedTo'])->paginate(10);
+        $filters = optional($request->only('filter'))['filter'];
 
-        $users = User::orderBy('name')->withTrashed()->get();
-        $statuses = TaskStatus::orderBy('name')->withTrashed()->get();
-        $tags = Tag::orderBy('name')->get();
-        
-        return view('tasks.index', [
-            'users' => $users,
-            'statuses' => $statuses,
-            'tags' => $tags,
-            'tasks' => $tasks,
-            'filter' => [
-                'status_id' => $request->input('filter.status_id'),
-                'assigned_to_id' => $request->input('filter.assigned_to_id'),
-                'tags' => $request->input('filter.tags'),
-            ]
-        ]);
+        $tasks = QueryBuilder::for(Task::class)
+            ->with(['status', 'tags', 'assignedTo', 'creator'])
+            ->allowedFilters(
+                AllowedFilter::exact('status_id'),
+                AllowedFilter::exact('created_by_id'),
+                AllowedFilter::exact('assigned_to_id'),
+                AllowedFilter::exact('tags.id')
+            )->get();
+
+        $statusItems  = TaskStatus::pluck('name', 'id');
+        $userItems = User::pluck('name', 'id');
+        $tagItems = Tag::pluck('name', 'id');
+
+        return view('task.index', compact('tasks', 'statusItems', 'userItems', 'filters', 'tagItems'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
+        $task = new Task();
         $taskStatuses = TaskStatus::all();
         $users = User::all();
         $tags = Tag::all();
-        return view('tasks.create', [
-            'statuses' => $taskStatuses,
-            'users' => $users,
-            'tags' => $tags
-        ]);
+
+        return view('task.create', compact('users', 'task', 'taskStatuses', 'tags'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return Response
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => [],
-            'status_id' => ['exists:task_statuses,id'],
-            'assigned_to_id' => ['nullable', 'exists:users,id']
+        $data = $this->validate($request, [
+            'name' => 'required|unique:tasks',
+            'status_id' => 'required|exists:task_statuses,id',
+            'description' => 'nullable|string',
+            'assigned_to_id' => 'nullable|integer',
         ]);
-        $data['creator_id'] = auth()->user()->id;
-        $tags = Tag::getIds($request->tags);
-        Task::create($data)->tags()->sync($tags);
-        return redirect()->route('tasks.index')->with('success', __('messages.task.create'));
+        $task = Auth::user()->createdTasks()->make($data);
+        $task->save();
+        $task->tags()->attach($request->input('tags'));
+
+        flash()->success(__('flashes.task.store'));
+
+        return redirect()->route('tasks.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \Craftworks\TaskManager\Task  $task
-     * @return \Illuminate\Http\Response
+     * @param  Task  $task
+     * @return Response
      */
     public function show(Task $task)
     {
-        return view('tasks.show', ['task' => $task]);
+        return view('task.show', compact('task'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \Craftworks\TaskManager\Task  $task
-     * @return \Illuminate\Http\Response
+     * @param  Task  $task
+     * @return Response
      */
     public function edit(Task $task)
     {
-        $taskStatuses = TaskStatus::all();
+
+        $taskStatuses  = TaskStatus::all();
         $users = User::all();
         $tags = Tag::all();
-        return view('tasks.edit', [
-            'task' => $task,
-            'statuses' => $taskStatuses,
-            'users' => $users,
-            'tags' => $tags
-        ]);
+
+        return view('task.edit', compact('task', 'taskStatuses', 'users', 'tags'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Craftworks\TaskManager\Task  $task
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Task  $task
+     * @return Response
      */
     public function update(Request $request, Task $task)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => [],
-            'status_id' => ['exists:task_statuses,id'],
-            'assigned_to_id' => ['nullable', 'exists:users,id']
+        $data = $this->validate($request, [
+            'name' => 'required|unique:tasks,name,' . $task->id,
+            'description' => 'nullable|string',
+            'assigned_to_id' => 'nullable|integer',
+            'status_id' => 'required|integer',
         ]);
-        $tags = Tag::getIds($request->tags);
-        $task->name = $data['name'];
-        $task->description = $data['description'];
-        $task->status_id = $data['status_id'];
-        $task->assigned_to_id = $data['assigned_to_id'];
-        $task->tags()->sync($tags);
+
+        $task->tags()->sync($request->input('tags'));
+        $task->fill($data);
         $task->save();
-        return redirect()->route('tasks.index')->with('success', __('messages.task.update'));
+
+        flash()->success(__('flashes.task.update'));
+
+        return redirect()->route('tasks.index');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Craftworks\TaskManager\Task  $task
-     * @return \Illuminate\Http\Response
+     * @param  Task  $task
+     * @return Response
      */
     public function destroy(Task $task)
     {
+        $this->authorize('destroy', $task);
         $task->tags()->detach();
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', __('messages.task.delete'));
+
+        flash()->success(__('flashes.task.destroy'));
+
+        return redirect()->route('tasks.index');
     }
 }

@@ -1,76 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    @include('partials.flash')
-    <h1>{{ __('messages.header3') }}</h1>
-    <div class="btn-group my-3" role="group" aria-label="Control buttons">
-        <a href="{{ route('tasks.create') }}" class="btn btn-success" role="button" aria-pressed="true">{{ __('Create task') }}</a>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            <h4>{{ __('messages.info.filter') }}</h4>
-            <form method="GET" action="{{ route('tasks.index') }}">
-                <h5>{{ __('Statuses') }}</h5>
-                <select id="statusFilter" class="form-control" name="filter[status_id]">
-                    <option>
-                        @foreach ($statuses as $status)
-                    <option value="{{ $status->id }}" {{ $filter['status_id'] == $status->id ? ' selected' : '' }}>{{ $status->name }}</option>
-                    @endforeach
-                </select>
-                <h5 class="mt-3">{{ __('Users') }}</h5>
-                <select id="assignedToFilter" class="form-control" name="filter[assigned_to_id]">
-                    <option>
-                    <option value="null" {{ $filter['assigned_to_id'] == 'null' ? ' selected' : '' }}>{{ __('Not assigned') }}</option>
-                    @foreach ($users as $user)
-                    <option value="{{ $user->id }}" {{ $filter['assigned_to_id'] == $user->id ? ' selected' : '' }}>{{ $user->name }}</option>
-                    @endforeach
-                </select>
-                <h5 class="mt-3">{{ __('Tags') }}</h5>
-                <select id="tagFilter" class="form-control" name="filter[tags]">
-                    <option>
-                    @foreach ($tags as $tag)
-                    <option value="{{ $tag->id }}" {{ $filter['tags'] == $tag->id ? ' selected' : '' }}>{{ $tag->name }}</option>
-                    @endforeach
-                </select>
-                <div class="form-group row my-2">
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-secondary">
-                            {{ __('Filter') }}
-                        </button>
-                    </div>
-                </div>
-            </form>
+    <h1 class="mb-5">{{ __('views.task.index.list') }}</h1>
+    <div class="d-flex">
+        <div>
+            {{ Form::open(['route' => 'tasks.index', 'class' => 'form-inline', 'method' => 'GET']) }}
+            {{ Form::select('filter[status_id]', $statusItems, optional($filters)['status_id'], ['placeholder' => __('models.task.status'), 'class' => 'form-control mr-2']) }}
+            {{ Form::select('filter[created_by_id]', $userItems, optional($filters)['created_by_id'], ['placeholder' => __('models.task.creator'), 'class' => 'form-control mr-2']) }}
+            {{ Form::select('filter[assigned_to_id]', $userItems, optional($filters)['assigned_to_id'], ['placeholder' => __('models.task.assignee'), 'class' => 'form-control mr-2']) }}
+            {{ Form::select('filter[tags.id]', $tagItems, optional($filters)['tags.id'], ['placeholder' => __('views.task.index.tags'), 'class' => 'form-control mr-2']) }}
+            {{ Form::submit(__('views.task.index.apply'), ['class' => 'btn btn-outline-primary mr-2']) }}
+            {{ Form::close() }}
         </div>
-        <div class="col-md-10">
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">{{ __('Name') }}</th>
-                        <th scope="col">{{ __('Status') }}</th>
-                        <th scope="col">{{ __('Creator') }}</th>
-                        <th scope="col">{{ __('Assigned To') }}</th>
-                        <th scope="col">{{ __('Created at') }}</th>
-                        <th scope="col">{{ __('Updated at') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($tasks as $task)
-                    <tr>
-                        <td><a href="{{ route('tasks.show', $task->id) }}">{{ $task->name }}</a></td>
-                        <td>{{ $task->status->name }}</td>
-                        <td>{{ $task->creator->name }}</td>
-                        <td>{{ $task->assignedTo ? $task->assignedTo->name : __('Not assigned') }}</td>
-                        <td>{{ $task->created_at }}</td>
-                        <td>{{ $task->updated_at }}</td>
-                    </tr>
-                    @empty
-                    <p>{{ __('messages.info.record') }}</p>
-                    @endforelse
-                </tbody>
-            </table>
-            {{ $tasks->appends(request()->except('page'))->links() }}
-        </div>
+        @auth
+            <a href="{{ route('tasks.create') }}" class="btn btn-primary ml-auto">{{ __('views.task.index.addNewTask') }}</a>
+        @endauth
     </div>
-</div>
+    <table class="table mt-2">
+        <thead>
+        <tr>
+            <th>{{ __('models.task.id') }}</th>
+            <th>{{ __('models.task.name') }}</th>
+            <th>{{ __('models.task.status') }}</th>
+            <th>{{ __('models.task.creator') }}</th>
+            <th>{{ __('models.task.assignee') }}</th>
+            <th>{{ __('models.task.createdAt') }}</th>
+            <th>{{ __('models.tag.tags') }}</th>
+            @auth
+                <th>{{ __('views.task.index.actions') }}</th>
+            @endauth
+        </tr>
+        </thead>
+        <tbody>
+        @foreach($tasks as $task)
+            <tr>
+                <td>{{$task->id}}</td>
+                <td><a href="{{ route('tasks.show', $task) }}">{{$task->name}}</a></td>
+                <td>{{$task->status->name}}</td>
+                <td>{{$task->creator->name }}</td>
+                <td>{{$task->assignedTo->name}}</td>
+                <td>{{$task->created_at}}</td>
+                <td>{{ implode(', ', $task->tags->pluck('name')->all())}}</td>
+
+                @auth
+                    <td>
+                        <a href="{{ route('tasks.edit', $task) }}">
+                            {{ __('views.task.index.edit') }}
+                        </a>
+
+                        @can('destroy', $task)
+
+                            <a href="{{ route('tasks.destroy', $task) }}" data-confirm="{{ __('views.task.index.confirm') }}"
+                               data-method="delete">
+                                {{ __('views.task.index.delete') }}
+                            </a>
+                        @endcan
+                    </td>
+                @endauth
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
 @endsection

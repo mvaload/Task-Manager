@@ -4,14 +4,16 @@
 namespace App\Http\Controllers;
 
 use App\Tag;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -22,7 +24,7 @@ class TagController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -32,13 +34,13 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:labels',
+            'name' => 'required|max:255|unique:tags',
         ]);
         Tag::create($validatedData);
 
@@ -49,8 +51,8 @@ class TagController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Tag  $tag
-     * @return \Illuminate\Http\Response
+     * @param Tag $tag
+     * @return Response
      */
     public function edit(Tag $tag)
     {
@@ -60,14 +62,14 @@ class TagController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Tag  $tag
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Tag $tag
+     * @return Response
      */
     public function update(Request $request, Tag $tag)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:labels',
+            'name' => 'required|max:255|unique:tags',
         ]);
         $tag->fill($validatedData)->save();
 
@@ -79,8 +81,9 @@ class TagController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Tag  $tag
-     * @return \Illuminate\Http\Response
+     * @param Tag $tag
+     * @return Response
+     * @throws Exception
      */
     public function destroy(Tag $tag)
     {

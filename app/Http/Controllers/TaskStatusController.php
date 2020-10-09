@@ -7,16 +7,10 @@ use App\TaskStatus;
 
 class TaskStatusController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['index']]);
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -24,11 +18,8 @@ class TaskStatusController extends Controller
      */
     public function index()
     {
-        $taskStatuses = TaskStatus::paginate(10);
-        return view('task_statuses.index', [
-            'taskStatuses' => $taskStatuses,
-            'initIteration' => ($taskStatuses->currentPage() - 1) * $taskStatuses->perPage()
-        ]);
+        $taskStatuses = TaskStatus::all();
+        return view('task_status.index', compact('taskStatuses'));
     }
 
     /**
@@ -38,9 +29,8 @@ class TaskStatusController extends Controller
      */
     public function create()
     {
-        return view('task_statuses.create');
+        return view('task_status.create');
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -49,50 +39,56 @@ class TaskStatusController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255']
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:task_statuses',
         ]);
-        TaskStatus::create($data);
-        return redirect()->route('task_statuses.index')->with('success', __('messages.taskStatus.create'));
+        TaskStatus::create($validatedData);
+
+        flash()->success(__('flashes.taskStatus.store'));
+        return redirect()->route('task_statuses.index');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \Craftworks\TaskManager\TaskStatus  $taskStatus
+     * @param  \App\TaskStatus  $taskStatus
      * @return \Illuminate\Http\Response
      */
     public function edit(TaskStatus $taskStatus)
     {
-        return view('task_statuses.edit', ['taskStatus' => $taskStatus]);
+        return view('task_status.edit', compact('taskStatus'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Craftworks\TaskManager\TaskStatus  $taskStatus
+     * @param  \App\TaskStatus  $taskStatus
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, TaskStatus $taskStatus)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255']
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:task_statuses',
         ]);
-        $taskStatus->name = $data['name'];
-        $taskStatus->save();
-        return redirect()->route('task_statuses.index')->with('success', __('messages.taskStatus.update'));
+        $taskStatus->fill($validatedData)->save();
+
+        flash()->success(__('flashes.taskStatus.update'));
+
+        return redirect()->route('task_statuses.index');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Craftworks\TaskManager\TaskStatus  $taskStatus
+     * @param  \App\TaskStatus  $taskStatus
      * @return \Illuminate\Http\Response
      */
     public function destroy(TaskStatus $taskStatus)
     {
         $taskStatus->delete();
-        return redirect()->route('task_statuses.index')->with('success', __('messages.taskStatus.delete'));
+        flash()->success(__('flashes.taskStatus.destroy'));
+
+        return back();
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Task;
 
-class IndexController extends Controller
+class HomeController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -14,9 +13,9 @@ class IndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth','verified']);
     }
-    
+
     /**
      * Show the application dashboard.
      *
@@ -24,7 +23,6 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $myTasks = auth()->user()->tasks;
-        return view('index', ['myTasks' => $myTasks]);
+        return view('home');
     }
 }
