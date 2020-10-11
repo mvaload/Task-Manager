@@ -18,7 +18,7 @@ class TaskControllerTest extends TestCase
         $this->withoutExceptionHandling();
         $this->user = factory(User::class)->create();
         $this->tag = factory(Tag::class)->create();
-        $this->task = factory(Task::class)->create(['created_by_id' => $this->user->id]);
+        $this->task = factory(Task::class)->create(['creator_id' => $this->user->id]);
         $this->task->tags()->attach($this->tag->id);
         $this->actingAs($this->user);
     }
@@ -77,7 +77,7 @@ class TaskControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $updatedTask = factory(Task::class)->make(['created_by_id' => $this->user->id])->toArray();
+        $updatedTask = factory(Task::class)->make(['creator_id' => $this->user->id])->toArray();
         $response = $this->patch(route('tasks.update', $this->task), $updatedTask);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('tasks.index'));

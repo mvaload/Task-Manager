@@ -33,7 +33,7 @@ class TaskController extends Controller
             ->with(['status', 'tags', 'assignedTo', 'creator'])
             ->allowedFilters(
                 AllowedFilter::exact('status_id'),
-                AllowedFilter::exact('created_by_id'),
+                AllowedFilter::exact('creator_id'),
                 AllowedFilter::exact('assigned_to_id'),
                 AllowedFilter::exact('tags.id')
             )->get();

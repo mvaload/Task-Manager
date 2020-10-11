@@ -15,7 +15,7 @@ return [
         'task' => [
             'status_id' => 'Status',
             'assigned_to_id' => 'Assignee',
-            'created_by_id' => 'Creator',
+            'creator_id' => 'Creator',
             'tags' => ''
         ],
     ],
