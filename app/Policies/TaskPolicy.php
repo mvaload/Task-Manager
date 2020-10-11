@@ -43,6 +43,6 @@ class TaskPolicy
      */
     public function destroy(User $user, Task $task)
     {
-        return $user->id === $task->creator_by_id;
+        return $task->creator->id === optional($user)->id;
     }
 }
