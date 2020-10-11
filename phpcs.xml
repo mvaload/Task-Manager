@@ -5,7 +5,7 @@
 
     <rule ref="PSR12"/>
 
-    <arg name="basepath" value="./code"/>
+    <arg name="basepath" value="."/>
     <arg name="colors"/>
     <arg name="parallel" value="75"/>
     <arg value="np"/>
