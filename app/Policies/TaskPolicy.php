@@ -12,17 +12,37 @@ class TaskPolicy
     use HandlesAuthorization;
 
     /**
-     * Create a new policy instance.
+     * Determine whether the user can create models.
      *
-     * @return void
+     * @param User $user
+     * @return bool
      */
-    public function __construct()
+    public function create(User $user)
     {
-        //
+        return true;
     }
 
+    /**
+     * Determine whether the user can update the model.
+     *
+     * @param User $user
+     * @param Task $task
+     * @return bool
+     */
+    public function update(User $user, Task $task)
+    {
+        return true;
+    }
+
+    /**
+     * Determine whether the user can delete the model
+     *
+     * @param User $user
+     * @param Task $task
+     * @return bool
+     */
     public function destroy(User $user, Task $task)
     {
-        return $task->creator()->first()->is($user);
+        return $user->id === $task->creator_by_id;
     }
 }
