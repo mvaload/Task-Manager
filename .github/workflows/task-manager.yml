@@ -20,6 +20,9 @@ jobs:
       - name: Setup project
         run: make setup
 
+      - name: Check lint
+        run: make lint
+
       - name: Test & Coverage
         uses: paambaati/codeclimate-action@v2.7.4
         env:
@@ -27,6 +30,3 @@ jobs:
         with:
           coverageCommand: make test-coverage
           debug: true
-
-      - name: Check lint
-        run: make lint

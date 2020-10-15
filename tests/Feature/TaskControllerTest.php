@@ -40,25 +40,17 @@ class TaskControllerTest extends TestCase
 
     public function testStore()
     {
-        $taskData = factory(Task::class)->make()->only('name', 'status_id', 'assigned_to_id');
-        $tagData = factory(Tag::class)->make()->only('name');
-        $response = $this->post(route('tasks.store'), $taskData + ['tags' => $tagData]);
+        $factoryData = factory(Task::class)->make()->toArray();
+        $data = \Arr::only(
+            $factoryData,
+            ['name', 'description', 'status_id', 'assigned_to_id']
+        );
+        $response = $this->actingAs($this->user)
+            ->post(route('tasks.store'), $data);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
-        $this->assertDatabaseHas('tasks', $taskData);
-        $this->assertDatabaseHas('tags', $tagData);
-
-        $latestTask = Task::latest('id')->first();
-        $latestTag = Tag::latest('id')->first();
-        $this->assertEquals(
-            $latestTag->tasks()->first()->id,
-            $latestTask->id
-        );
-        $this->assertDatabaseHas('tag_task', [
-            'task_id' => $latestTask->id,
-            'tag_id' => $latestTag->id
-        ]);
+        $this->assertDatabaseHas('tasks', $data);
     }
 
     public function testShow()
@@ -77,14 +69,18 @@ class TaskControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $updatedTask = factory(Task::class)->make(['creator_id' => $this->user->id])->toArray();
-        $response = $this->patch(route('tasks.update', $this->task), $updatedTask);
+        $task = factory(Task::class)->create();
+        $factoryData = factory(Task::class)->make()->toArray();
+        $data = \Arr::only(
+            $factoryData,
+            ['name', 'description', 'status_id']
+        );
+        $response = $this->actingAs($task->creator)
+            ->patch(route('tasks.update', $task), $data);
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('tasks.index'));
-        $this->assertDatabaseHas('tasks', $updatedTask);
-        $this->assertDatabaseMissing('tag_task', [
-            'task_id' => $this->task->id, 'tag_id' => $this->tag->id
-        ]);
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('tasks', $data);
     }
 
     public function testDestroy()

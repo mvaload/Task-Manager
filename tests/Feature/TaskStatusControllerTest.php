@@ -51,13 +51,15 @@ class TaskStatusControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $newTaskStatus = factory(TaskStatus::class)->make();
-        $name = $newTaskStatus->name;
-        $response = $this->patch(route('task_statuses.update', $this->task_status), compact('name'));
+        $task = factory(TaskStatus::class)->create();
+        $factoryData = factory(TaskStatus::class)->make()->toArray();
+        $data = ['name' => $factoryData['name']];
+        $response = $this->actingAs($this->user)
+            ->patch(route('task_statuses.update', $task), $data);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
-        $this->assertDatabaseHas('task_statuses', compact('name'));
+        $this->assertDatabaseHas('task_statuses', $data);
     }
 
     public function testDestroy()

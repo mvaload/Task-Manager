@@ -18,12 +18,12 @@ class Task extends Model
     {
         return $this->belongsTo(TaskStatus::class)->withTrashed();
     }
-    
+
     public function creator()
     {
         return $this->belongsTo(User::class)->withTrashed();
     }
-    
+
     public function assignedTo()
     {
         return $this->belongsTo(User::class)->withTrashed();
