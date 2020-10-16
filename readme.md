@@ -6,9 +6,9 @@
 
 Link to heroku domain: https://intense-basin-23419.herokuapp.com/
 
-###Install
+### Install
 `git clone https://github.com/ini1990/php-project-lvl4.git`
-##Setup
+### Setup
 `composer install`  
 
 Create .env file and set up some keys like db connection, mailtrap, rollbar if you need thats
@@ -26,7 +26,7 @@ php artisan migrate
 php artisan db:seed --class=TaskSeeder
 npm install
 ```
-###Launch localhost
+### Launch localhost
 `make run`
-###Run tests
+### Run tests
 `make test`
