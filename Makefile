@@ -4,6 +4,8 @@ setup:
 	php artisan key:gen --ansi
 	touch database/database.sqlite || true
 	php artisan migrate
+	php artisan db:seed
+	npm install
 lint:
 	composer phpcs
 lint-fix:
