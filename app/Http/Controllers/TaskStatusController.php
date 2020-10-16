@@ -42,7 +42,9 @@ class TaskStatusController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:255|unique:task_statuses',
         ]);
-        TaskStatus::create($validatedData);
+        $taskStatus = new TaskStatus();
+        $taskStatus->fill($validatedData);
+        $taskStatus->save();
 
         flash()->success(__('flashes.taskStatus.store'));
         return redirect()->route('task_statuses.index');
