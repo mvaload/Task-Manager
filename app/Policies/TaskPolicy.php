@@ -42,6 +42,6 @@ class TaskPolicy
      */
     public function destroy(User $user, Task $task)
     {
-        return $task->creator->id === optional($user)->id;
+        return $task->creator->is($user);
     }
 }
