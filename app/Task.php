@@ -21,7 +21,7 @@ class Task extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'created_by_id', 'id');
+        return $this->belongsTo(User::class, 'created_id', 'id');
     }
 
     public function assignee()
