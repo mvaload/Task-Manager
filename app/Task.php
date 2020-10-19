@@ -16,12 +16,12 @@ class Task extends Model
 
     public function status()
     {
-        return $this->belongsTo(TaskStatus::class)->withTrashed();
+        return $this->belongsTo(TaskStatus::class);
     }
 
     public function creator()
     {
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class, 'created_by_id', 'id');
     }
 
     public function assignee()
