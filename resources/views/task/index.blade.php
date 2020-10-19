@@ -38,7 +38,7 @@
                 <td><a href="{{ route('tasks.show', $task) }}">{{ $task->name }}</a></td>
                 <td>{{ $task->status->name }}</td>
                 <td>{{ $task->creator->name }}</td>
-                <td>{{ $task->assignedTo ? $task->assignedTo->name : __('Not assigned') }}</td>
+                <td>{{ $task->assignee->name }}</td>
                 <td>{{ $task->created_at->format('M d Y') }}</td>
                 <td>{{ implode(', ', $task->tags->pluck('name')->all()) }}</td>
 

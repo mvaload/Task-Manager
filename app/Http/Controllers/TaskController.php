@@ -30,7 +30,7 @@ class TaskController extends Controller
         $filters = optional($request->only('filter'))['filter'];
 
         $tasks = QueryBuilder::for(Task::class)
-            ->with(['status', 'tags', 'assignedTo', 'creator'])
+            ->with(['status', 'tags', 'assignee', 'creator'])
             ->allowedFilters(
                 AllowedFilter::exact('status_id'),
                 AllowedFilter::exact('creator_id'),

@@ -24,9 +24,9 @@ class Task extends Model
         return $this->belongsTo(User::class)->withTrashed();
     }
 
-    public function assignedTo()
+    public function assignee()
     {
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class, 'assigned_to_id')->withDefault(['name' => '-']);
     }
 
     public function tags()
