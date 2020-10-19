@@ -59,7 +59,7 @@ return [
     'welcome' => [
         'taskManager' => 'Task Manager',
         'description' => 'Simple implementation of typical task manager',
-        'hexletProject' => 'Hexlet Project',
+        'project_by' => 'Project by mvaload',
         'learnMore' => 'Learn more'
     ]
 ];
