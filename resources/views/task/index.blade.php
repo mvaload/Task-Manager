@@ -34,13 +34,13 @@
         <tbody>
         @foreach($tasks as $task)
             <tr>
-                <td>{{$task->id}}</td>
-                <td><a href="{{ route('tasks.show', $task) }}">{{$task->name}}</a></td>
-                <td>{{$task->status->name}}</td>
-                <td>{{$task->creator->name }}</td>
-                <td>{{$task->assignedTo->name}}</td>
-                <td>{{$task->created_at}}</td>
-                <td>{{ implode(', ', $task->tags->pluck('name')->all())}}</td>
+                <td>{{ $task->id }}</td>
+                <td><a href="{{ route('tasks.show', $task) }}">{{ $task->name }}</a></td>
+                <td>{{ $task->status->name }}</td>
+                <td>{{ $task->creator->name }}</td>
+                <td>{{ $task->assignedTo ? $task->assignedTo->name : __('Not assigned') }}</td>
+                <td>{{ $task->created_at->format('M d Y') }}</td>
+                <td>{{ implode(', ', $task->tags->pluck('name')->all()) }}</td>
 
                 @auth
                     <td>

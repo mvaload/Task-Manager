@@ -5,12 +5,10 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
-    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -43,8 +41,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Task::class, 'creator_id');
     }
-    
-    public function tasks()
+
+    public function assignedTasks()
     {
         return $this->hasMany(Task::class, 'assigned_to_id');
     }
