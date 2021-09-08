@@ -7,7 +7,7 @@
 Link to heroku domain: https://intense-basin-23419.herokuapp.com/
 
 ### Install
-`git clone https://github.com/ini1990/php-project-lvl4.git`
+`git clone https://github.com/mvaload/Task-Manager.git`
 ### Setup
 `composer install`  
 
